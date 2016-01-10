@@ -2,5 +2,7 @@
 name = "forust"
 version = "0.1.0"
 authors = ["Brad Urani <bradurani@gmail.com>"]
+description = Manage Procfile-based applications
+license = MIT
 [dependencies]
 clap = {version = "1", features = ["yaml"]}
