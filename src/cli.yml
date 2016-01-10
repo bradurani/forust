@@ -1,0 +1,34 @@
+name: forust
+version: 0.1
+author: Brad Urani <bradurani@gmail.com>
+about: Forust is a Procfile runner built with Rust
+args:
+  - directory:
+        short: d
+        long: directory
+        help: "Default: Procfile directory"
+        takes_value: true
+  - file:
+        short: f
+        long: file
+        help: "Default: Procfile"
+        takes_value: true
+# subcommands:
+#     - check:
+#         help: "Validate your application's Procfile"
+#     - help:
+#         about: "Describe available commands or one specific command"
+#         args:
+#           - COMMAND:
+#     - run:
+#         about: "Run a command using your application's environment"
+#         args:
+#           - COMMAND:
+#               required: true
+#     - start:
+#         about: "Start the application (or a specifc PROCESS)"
+#         args:
+#           - PROCESS
+#     - version:
+#         about: "Display Forust crate version"
+#               
