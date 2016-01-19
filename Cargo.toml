@@ -6,3 +6,4 @@ description = "Manage Procfile-based applications"
 license = "MIT"
 [dependencies]
 clap = {version = "1", features = ["yaml"]}
+iterator_to_hash_map = { version = "0.9.0" }

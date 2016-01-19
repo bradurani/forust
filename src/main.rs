@@ -1,7 +1,8 @@
 #[macro_use]
 extern crate clap;
-use clap::App;
+extern crate iterator_to_hash_map;
 
+use clap::App;
 use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
@@ -9,10 +10,12 @@ use std::path::Path;
 use std::process::Command;
 use std::process::Stdio;
 use std::collections::HashMap;
+use std::hash::Hash;
+use iterator_to_hash_map::ToHashMap;
 
 fn main() {
     let yaml = load_yaml!("cli.yml");
-    let matches = App::from_yaml(yaml).get_matches();
+    let matches = App::from_yaml(yaml).nameget_matches();
 
     let dir: &str = matches.value_of("directory").unwrap_or(".");
     let file: &str = matches.value_of("file").unwrap_or("Procfile");
@@ -22,32 +25,27 @@ fn main() {
     let hm = parse_contents(&contents);
     println!("{:?}", hm);
 }
-fn parse_contents(contents: &str) -> HashMap<&str, &str> {
-    let lines = contents.lines()
-                        .collect::<Vec<&str>>();
-    let iter = lines.iter();
-    let collection = iter.map(|s| s.split(':').collect::<Vec<&str>>())
-                         .collect::<Vec<Vec<&str>>>();
-    let iter2 = collection.iter();
-
-    let mut hm: HashMap<&str, &str> = HashMap::new();
-    for vector in iter2 {
-        hm.insert(vector[0], vector[1]);
-    }
-    hm
-}
 
 fn run_command(cmd: &str) {
     let mut process = Command::new(cmd);
     let mut child = process.spawn()
                            .unwrap_or_else(|e| panic!("failed to execute child: {}", e));
     let id = child.id();
-    let ecode = child.wait()
-                     .unwrap_or_else(|e| panic!("failed to wait on child: {}", e));
-    println!("ecode {:?}", ecode);
+    // let ecode = child.wait()
+    //                  .unwrap_or_else(|e| panic!("failed to wait on child: {}", e));
+    // println!("ecode {:?}", ecode);
     id;
 }
 
+fn parse_contents<'m>(contents: &str) -> HashMap<&str, &str> {
+    let lines = contents.lines()
+                        .collect::<Vec<&str>>();
+    let iter = lines.iter();
+    let collection = iter.map(|s| s.split(':').collect::<Vec<&str>>())
+                         .collect::<Vec<Vec<&str>>>();
+    collection.to_hash_map(|i: &Vec<&str>| -> &str { i[0].clone() },
+                           |i: &Vec<&str>| -> &str { i[1].clone() })
+}
 
 fn open_file(dir: &str, file: &str) -> String {
     let path = Path::new(dir).join(file);
