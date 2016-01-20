@@ -10,12 +10,11 @@ use std::path::Path;
 use std::process::Command;
 use std::process::Stdio;
 use std::collections::HashMap;
-use std::hash::Hash;
 use iterator_to_hash_map::ToHashMap;
 
 fn main() {
     let yaml = load_yaml!("cli.yml");
-    let matches = App::from_yaml(yaml).nameget_matches();
+    let matches = App::from_yaml(yaml).get_matches();
 
     let dir: &str = matches.value_of("directory").unwrap_or(".");
     let file: &str = matches.value_of("file").unwrap_or("Procfile");
@@ -37,14 +36,14 @@ fn run_command(cmd: &str) {
     id;
 }
 
-fn parse_contents<'m>(contents: &str) -> HashMap<&str, &str> {
+fn parse_contents<'m>(contents: &'m str) -> HashMap<&'m str, &'m str> {
     let lines = contents.lines()
                         .collect::<Vec<&str>>();
     let iter = lines.iter();
     let collection = iter.map(|s| s.split(':').collect::<Vec<&str>>())
                          .collect::<Vec<Vec<&str>>>();
-    collection.to_hash_map(|i: &Vec<&str>| -> &str { i[0].clone() },
-                           |i: &Vec<&str>| -> &str { i[1].clone() })
+    collection.to_hash_map(|i: &Vec<&'m str>| -> &'m str { i[0] },
+                           |i: &Vec<&'m str>| -> &'m str { i[1] })
 }
 
 fn open_file(dir: &str, file: &str) -> String {
